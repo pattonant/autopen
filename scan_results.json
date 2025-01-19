@@ -1,0 +1,49 @@
+{
+    "basic_info": {
+        "title": "Home of Acunetix Art",
+        "server": "nginx/1.19.0",
+        "headers": {
+            "Server": "nginx/1.19.0",
+            "Date": "Sun, 19 Jan 2025 13:16:01 GMT",
+            "Content-Type": "text/html; charset=UTF-8",
+            "Transfer-Encoding": "chunked",
+            "Connection": "keep-alive",
+            "X-Powered-By": "PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+            "Content-Encoding": "gzip"
+        },
+        "frameworks": [
+            "PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1"
+        ],
+        "tech_stack": [
+            "nginx/1.19.0"
+        ],
+        "links": [
+            "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+            "https://www.acunetix.com/vulnerability-scanner/",
+            "https://www.acunetix.com/",
+            "http://testphp.vulnweb.com/index.php",
+            "https://www.acunetix.com/vulnerability-scanner/php-security-scanner/",
+            "http://testphp.vulnweb.com/hpp/",
+            "http://testphp.vulnweb.com/disclaimer.php",
+            "http://testphp.vulnweb.com/guestbook.php",
+            "http://testphp.vulnweb.com/AJAX/index.php",
+            "http://testphp.vulnweb.com/cart.php",
+            "http://testphp.vulnweb.com/artists.php",
+            "http://www.acunetix.com",
+            "http://testphp.vulnweb.com/login.php",
+            "https://www.acunetix.com/blog/articles/prevent-sql-injection-vulnerabilities-in-php-applications/",
+            "http://testphp.vulnweb.com/privacy.php",
+            "http://www.eclectasy.com/Fractal-Explorer/index.html",
+            "http://testphp.vulnweb.com/userinfo.php",
+            "http://testphp.vulnweb.com/categories.php"
+        ],
+        "dns_records": {
+            "A": [
+                "44.228.249.3"
+            ],
+            "TXT": [
+                "\"v=spf1 -all\""
+            ]
+        }
+    }
+}

