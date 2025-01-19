@@ -189,13 +189,6 @@ python autopen.py -t example.com -o report.md
 
 本项目采用MIT协议开源，详见 [LICENSE](LICENSE) 文件。
 
-## 📞 联系方式
-
-- 作者：Your Name
-- 邮箱：your.email@example.com
-- 项目地址：https://github.com/yourusername/autopen
-- 问题反馈：https://github.com/yourusername/autopen/issues
-
 ## 🌟 致谢
 
 感谢以下开源项目和工具：
